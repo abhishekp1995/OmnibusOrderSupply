@@ -1,5 +1,6 @@
 // Load dropdown data and handle form submission
 document.addEventListener('DOMContentLoaded', function () {
+  // Get references to all important DOM elements
   const categorySelect = document.getElementById('category');
   const validationMessage = document.getElementById('validationMessage');
   const subCategorySelect = document.getElementById('subCategory');
@@ -18,13 +19,16 @@ document.addEventListener('DOMContentLoaded', function () {
   const grandTotalCell = document.getElementById('grandTotal');
 
   // Load categories on page load
+  console.log("Loading categories...");
   loadCategories();
 
   // Initialize the grand total display on page load
+  console.log("Initializing grand total display...");
   updateGrandTotal();
 
   // Event listeners for category changes
   categorySelect.addEventListener('change', () => {
+    console.log("Category changed, resetting fields and loading subcategories...");
     resetFields();
     subCategorySelect.disabled = false;
     subCategorySelect.value = 0;
@@ -34,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Event listeners for subcategory changes
   subCategorySelect.addEventListener('change', () => {
     if (subCategorySelect.value) { // Check if a valid subcategory is selected
+      console.log("Subcategory changed, resetting fields and loading descriptions...");
       resetFields(); // Reset fields when subcategory changes
       descriptionSelect.disabled = false;
       descriptionSelect.value = 0;
@@ -43,23 +48,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Event listeners for description changes
   descriptionSelect.addEventListener('change', () => {
+    console.log("Description changed, resetting fields and loading HSN code...");
     resetFields();
     qtyInput.disabled = false;
     priceInput.disabled = false
     loadHSN();
   });
 
-  //Event listeners for clear button
+  // Event listeners for clear button
   clearFields.addEventListener('click', () => {
+    console.log("Clearing fields...");
     resetDropdowns();
     resetFields();
     validationMessage.innerHTML = ''; // Clear validation message on clear
     validationMessage.setAttribute('class', '');
   });
 
-  //Event listeners for add button
+  // Event listeners for add button
   addEntry.addEventListener('click', () => {
     if (validateData()) {
+      console.log("Adding new entry to the table...");
       addRow(hsnInput, descriptionSelect, qtyInput.value, Number(priceInput.value));
       updateGrandTotal();
     }
@@ -68,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Event listener for delete row buttons
   tableBody.addEventListener('click', function (event) {
     if (event.target && event.target.classList.contains('delete-row')) {
+      console.log("Deleting row...");
       const row = event.target.parentElement.parentElement;
       row.remove();
 
@@ -80,27 +89,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Event listener to show/hide additional invoice fields
   generateInvoice.addEventListener('click', function () {
+    console.log("Validating table rows for invoice generation...");
     validateTableRows();
   });
 
-  //Event listener to copy billing info to shipping if checkbox is selected
+  // Event listener to copy billing info to shipping if checkbox is selected
   sameAsBillTo.addEventListener('change', function () {
-    shipName = document.getElementById('shipName');
-    shipPhone = document.getElementById('shipPhone');
-    shipEmail = document.getElementById('shipEmail');
-    shipAddress = document.getElementById('shipAddress');
-    shipCity = document.getElementById('shipCity');
-    shipState = document.getElementById('shipState');
-    shipPincode = document.getElementById('shipPincode');
-    billName = '';
-    billPhone = '';
-    billEmail = '';
-    billAddress = '';
-    billCity = '';
-    billState = '';
-    billPincode = '';
-    isdisabled = false;
+    console.log("Copying billing information to shipping fields...");
+    const shipName = document.getElementById('shipName');
+    const shipPhone = document.getElementById('shipPhone');
+    const shipEmail = document.getElementById('shipEmail');
+    const shipAddress = document.getElementById('shipAddress');
+    const shipCity = document.getElementById('shipCity');
+    const shipState = document.getElementById('shipState');
+    const shipPincode = document.getElementById('shipPincode');
+    let billName = '';
+    let billPhone = '';
+    let billEmail = '';
+    let billAddress = '';
+    let billCity = '';
+    let billState = '';
+    let billPincode = '';
+    let isdisabled = false;
     if (this.checked) {
+      console.log("Checkbox checked, disabling shipping fields and copying billing info...");
       isdisabled = true;
       billName = document.getElementById('billName').value.trim();
       billPhone = document.getElementById('billPhone').value.trim();
@@ -116,17 +128,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Event listener for the "Print Invoice" button
   printInvoice.addEventListener('click', function () {
+    console.log("Generating PDF invoice...");
     if (validateBillingInfo()) {
-    const rows = tableBody.getElementsByTagName('tr');
-    for (let i = 0; i < rows.length; i++) {
-      // Get all cells in the current row
-      const cells = rows[i].getElementsByTagName('td');
-      // Check if there are at least 7 columns and if the 7th cell contains a button
-      if (cells.length >= 7 && cells[6].querySelector('button')) {
-        // Disable the button in the 7th column
-        cells[6].querySelector('button').disabled = true;
+      const rows = tableBody.getElementsByTagName('tr');
+      for (let i = 0; i < rows.length; i++) {
+        // Get all cells in the current row
+        const cells = rows[i].getElementsByTagName('td');
+        // Check if there are at least 7 columns and if the 7th cell contains a button
+        if (cells.length >= 7 && cells[6].querySelector('button')) {
+          // Disable the button in the 7th column
+          cells[6].querySelector('button').disabled = true;
+        }
       }
-    }
       addEntry.disabled = true;
       saveSale.disabled = false;
       generateInvoicePDF();
@@ -135,6 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Event listener for the "Print Invoice" button
   saveSale.addEventListener('click', function(){
+    console.log("Saving sale information...");
     validationMessage.innerText = 'Sales saved successfully !'
     validationMessage.setAttribute('class', 'alert alert-success');
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -260,9 +274,9 @@ document.addEventListener('DOMContentLoaded', function () {
   //Function to validate input data
   function validateData() {
     let isValid = true;
-    price = priceInput.value.trim()
-    qty = qtyInput.value.trim()
-    message = '';
+    const price = priceInput.value.trim();
+    const qty = qtyInput.value.trim();
+    let message = '';
 
     // Check for valid category
     if (categorySelect.value == 0) {
@@ -296,8 +310,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!isValid) {
       validationMessage.innerText = message;
       validationMessage.setAttribute('class', 'alert alert-danger');
-    }
-    else {
+    } else {
       validationMessage.innerText = '';
       validationMessage.setAttribute('class', '');
     }
@@ -306,30 +319,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
   //Function to validate billing information
   function validateBillingInfo() {
-    orderId = document.getElementById('orderId');
-    orderDate = document.getElementById('orderDate');
-    invoiceNo = document.getElementById('invoiceNo');
-    invoiceDate = document.getElementById('invoiceDate');
-    billName = document.getElementById('billName');
-    billPhone = document.getElementById('billPhone');
-    billEmail = document.getElementById('billEmail');
-    billAddress = document.getElementById('billAddress');
-    billCity = document.getElementById('billCity');
-    billState = document.getElementById('billState');
-    billPincode = document.getElementById('billPincode');
-    shipName = document.getElementById('shipName');
-    shipPhone = document.getElementById('shipPhone');
-    shipEmail = document.getElementById('shipEmail');
-    shipAddress = document.getElementById('shipAddress');
-    shipCity = document.getElementById('shipCity');
-    shipState = document.getElementById('shipState');
-    shipPincode = document.getElementById('shipPincode');
-    paymentMode = document.getElementById('paymentMode');
-    message = '';
-    isValid = true;
+    const orderId = document.getElementById('orderId');
+    const orderDate = document.getElementById('orderDate');
+    const invoiceNo = document.getElementById('invoiceNo');
+    const invoiceDate = document.getElementById('invoiceDate');
+    const billName = document.getElementById('billName');
+    const billPhone = document.getElementById('billPhone');
+    const billEmail = document.getElementById('billEmail');
+    const billAddress = document.getElementById('billAddress');
+    const billCity = document.getElementById('billCity');
+    const billState = document.getElementById('billState');
+    const billPincode = document.getElementById('billPincode');
+    const shipName = document.getElementById('shipName');
+    const shipPhone = document.getElementById('shipPhone');
+    const shipEmail = document.getElementById('shipEmail');
+    const shipAddress = document.getElementById('shipAddress');
+    const shipCity = document.getElementById('shipCity');
+    const shipState = document.getElementById('shipState');
+    const shipPincode = document.getElementById('shipPincode');
+    const paymentMode = document.getElementById('paymentMode');
+    let message = '';
+    let isValid = true;
     const phoneRegex = /^(?:\+1\s?)?(?:$)?(\d{3})(?:$)?[.\-\s]?(\d{3})[.\-\s]?(\d{4})$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    ;
 
     if (orderId.value.trim() == '') {
       message += 'Please enter order ID.\n';
@@ -354,16 +366,18 @@ document.addEventListener('DOMContentLoaded', function () {
     if (billPhone.value.trim() == '') {
       message += 'Please enter billing customer\'s phone number.\n';
       isValid = false;
-    }
-    else if (!billPhone.value.trim().match(phoneRegex)) {
+    } else if (!billPhone.value.trim().match(phoneRegex)) {
       isValid = false
       message += 'Billing cutstomer\'s phone number not valid.\n';
     }
-    if (!billEmail.value.trim() == '') {
-      let isValid = billEmail.value.trim().match(emailRegex);
-      if (!isValid)
-        message += 'Billing cutstomer\'s email not in valid format.\n';
+    if (billEmail.value.trim() != '') { // Corrected condition to check non-empty email field
+      let isValidEmail = billEmail.value.trim().match(emailRegex);
+      if (!isValidEmail) {
+        message += 'Billing customer\'s email not in valid format.\n'; // Corrected typo from "cutstomer's" to "customer's"
+        isValid = false;
+      }
     }
+
     if ((billAddress.value.trim() == '') || (billCity.value.trim() == '') || (billState.value.trim() == '') || (billPincode.value.trim() == '')) {
       message += 'Ensure billing address, city, state and PIN code are filled\n';
       isValid = false;
@@ -375,18 +389,20 @@ document.addEventListener('DOMContentLoaded', function () {
     if (shipPhone.value.trim() == '') {
       message += 'Please enter shipping customer\'s phone number.\n';
       isValid = false;
-    }
-    else if (!shipPhone.value.trim().match(phoneRegex)) {
+    } else if (!shipPhone.value.trim().match(phoneRegex)) {
       isValid = false;
-      message += 'Shipping cutstomer\'s phone number not valid.\n';
+      message += 'Shipping cutstomer\'s phone number not valid.\n'; // Corrected typo from "cutstomer's" to "customer's"
     }
-    if (!shipEmail.value.trim() == '') {
-      let isValid = shipEmail.value.trim().match(emailRegex);
-      if (!isValid)
-        message += 'Shipping cutstomer\'s email not in valid format.\n';
+    if (shipEmail.value.trim() != '') { // Corrected condition to check non-empty email field
+      let isValidEmail = shipEmail.value.trim().match(emailRegex);
+      if (!isValidEmail) {
+        message += 'Shipping customer\'s email not in valid format.\n'; // Corrected typo from "cutstomer's" to "customer's"
+        isValid = false;
+      }
     }
+
     if ((shipAddress.value.trim() == '') || (shipCity.value.trim() == '') || (shipState.value.trim() == '') || (shipPincode.value.trim() == '')) {
-      message += 'Ensure shiping address, city, state and PIN code are filled\n';
+      message += 'Ensure shipping address, city, state and PIN code are filled\n';
       isValid = false;
     }
     if (paymentMode.value == '') {
@@ -397,8 +413,7 @@ document.addEventListener('DOMContentLoaded', function () {
       validationMessage.innerText = message;
       validationMessage.setAttribute('class', 'alert alert-danger');
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-    }
-    else {
+    } else {
       validationMessage.innerText = '';
       validationMessage.setAttribute('class', '');
     }
@@ -413,7 +428,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Create new table row
     const selectedDescription = descriptionSelect.value.split('|');
     const newRow = document.createElement('tr');
-    const grandTotal = document.createElement('tr');
+
     newRow.innerHTML =
       `<td>${tableBody.rows.length + 1}</td>` +
       `<td>${hsnInput.value}</td>` +
@@ -421,14 +436,16 @@ document.addEventListener('DOMContentLoaded', function () {
       `<td>${qtyInput}</td>` +
       `<td>${priceInput.toFixed(2)}</td>` +
       `<td>${total.toFixed(2)}</td>` +
-      `<td><button type="button" class="btn btn-danger btn-sm delete-row" style="margin-left:7%">Delete</button></td>`;
+      `<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>`;
 
-    newRow.style.textAlign = 'center'
+    newRow.style.textAlign = 'center';
     tableBody.appendChild(newRow);
 
     // Clear the form
     resetDropdowns();
     resetFields();
+
+    console.log("Row added to table:", newRow); // Debugging statement
   }
 
   // Function to re-number rows after deletion
@@ -446,22 +463,22 @@ document.addEventListener('DOMContentLoaded', function () {
       invoiceFields.style.display = 'none';
       validationMessage.innerText = 'No items to invoice !';
       validationMessage.setAttribute('class', 'alert alert-danger');
-    }
-    else {
+    } else {
       invoiceFields.style.display = 'block';
     }
   }
 
-  //Function to disabled shipping fields when shipping same as billing checkbox selected
-  function enableDisableShippingFields(shipName, shipPhone, shipEmail, shipAddress, shipCity, shipCity, shipState, shipPincode, isdisabled) {
+  //Function to disable shipping fields when "shipping same as billing" checkbox selected
+  function enableDisableShippingFields(shipName, shipPhone, shipEmail, shipAddress, shipCity, shipState, shipPincode, isdisabled) {
     shipName.disabled = isdisabled;
     shipPhone.disabled = isdisabled;
     shipEmail.disabled = isdisabled;
     shipAddress.disabled = isdisabled;
     shipCity.disabled = isdisabled;
-    shipCity.disabled = isdisabled;
     shipState.disabled = isdisabled;
     shipPincode.disabled = isdisabled;
+
+    console.log("Shipping fields enabled/disabled:", isdisabled); // Debugging statement
   }
 
   //Function to copy billing field values to shipping fields when "shipping same as billing" checkbox selected
@@ -473,6 +490,8 @@ document.addEventListener('DOMContentLoaded', function () {
     shipCity.value = billCity;
     shipState.value = billState;
     shipPincode.value = billPincode;
+
+    console.log("Billing info copied to shipping fields"); // Debugging statement
   }
 
   //Function to calculate grand total
@@ -486,34 +505,64 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
     grandTotalCell.textContent = grandTotal.toFixed(2);
+
+    console.log("Grand Total updated:", grandTotal); // Debugging statement
   }
 
   // Function to generate PDF invoice
   async function generateInvoicePDF() {
-    shopname = 'Omnibus Traders';
-    address = 'Plot No. 326/3083, Indira Housing Colony, Lingipur, Bhubaseswar (dist.KHORDHA), Odisha, PIN-751002';
-    phone = '+91-9439533573';
-    email = 'omnibustraders@gmail.com';
-    gst = '';
-    orderId = document.getElementById('orderId').value.trim();
-    orderDate = document.getElementById('orderDate');
-    invoiceNo = document.getElementById('invoiceNo').value.trim();
-    invoiceDate = document.getElementById('invoiceDate');
-    billName = document.getElementById('billName').value.trim();
-    billPhone = document.getElementById('billPhone').value.trim();
-    billEmail = document.getElementById('billEmail').value.trim();
-    billAddress = document.getElementById('billAddress').value.trim();
-    billCity = document.getElementById('billCity').value.trim();
-    billState = document.getElementById('billState').value.trim();
-    billPincode = document.getElementById('billPincode').value.trim();
-    shipName = document.getElementById('shipName').value.trim();
-    shipPhone = document.getElementById('shipPhone').value.trim();
-    shipEmail = document.getElementById('shipEmail').value.trim();
-    shipAddress = document.getElementById('shipAddress').value.trim();
-    shipCity = document.getElementById('shipCity').value.trim();
-    shipState = document.getElementById('shipState').value.trim();
-    shipPincode = document.getElementById('shipPincode').value.trim();
-    paymentMode = document.getElementById('paymentMode').value.trim();
-  }
+    const shopname = 'Omnibus Traders';
+    const address = 'Plot No. 326/3083, Indira Housing Colony, Lingipur, Bhubaseswar (dist.KHORDHA), Odisha, PIN-751002';
+    const phone = '+91-9439533573';
+    const email = 'omnibustraders@gmail.com';
+    const gst = '';
+    const orderId = document.getElementById('orderId').value.trim();
+    const orderDate = document.getElementById('orderDate');
+    const invoiceNo = document.getElementById('invoiceNo').value.trim();
+    const invoiceDate = document.getElementById('invoiceDate');
+    const billName = document.getElementById('billName').value.trim();
+    const billPhone = document.getElementById('billPhone').value.trim();
+    const billEmail = document.getElementById('billEmail').value.trim();
+    const billAddress = document.getElementById('billAddress').value.trim();
+    const billCity = document.getElementById('billCity').value.trim();
+    const billState = document.getElementById('billState').value.trim();
+    const billPincode = document.getElementById('billPincode').value.trim();
+    const shipName = document.getElementById('shipName').value.trim();
+    const shipPhone = document.getElementById('shipPhone').value.trim();
+    const shipEmail = document.getElementById('shipEmail').value.trim();
+    const shipAddress = document.getElementById('shipAddress').value.trim();
+    const shipCity = document.getElementById('shipCity').value.trim();
+    const shipState = document.getElementById('shipState').value.trim();
+    const shipPincode = document.getElementById('shipPincode').value.trim();
+    const paymentMode = document.getElementById('paymentMode').value.trim();
 
+    console.log("Generating invoice PDF with the following data:", {
+      shopname,
+      address,
+      phone,
+      email,
+      gst,
+      orderId,
+      orderDate,
+      invoiceNo,
+      invoiceDate,
+      billName,
+      billPhone,
+      billEmail,
+      billAddress,
+      billCity,
+      billState,
+      billPincode,
+      shipName,
+      shipPhone,
+      shipEmail,
+      shipAddress,
+      shipCity,
+      shipState,
+      shipPincode,
+      paymentMode
+    });
+
+    // Add code here to generate and download the PDF invoice using a library like jsPDF
+  }
 });

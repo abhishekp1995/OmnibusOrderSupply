@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Form with Bootstrap</title>
+  <!-- Add Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"> <!-- Link to external CSS file -->
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand" href="#">Invoice App</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Contact</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Container for the main content -->
+  <div class="container">
+
+    <!-- Product Entry Form Section -->
+    <h4>Product Entry Form</h4>
+    <div id="validationMessage"></div>
+    <form id="productForm" style="margin-top: 20px;">
+      <div class="form-row">
+        <div class="form-group col-md-3">
+          <label for="category">Category</label>
+          <select class="form-control" id="category" required>
+            <option value="0" disabled selected>--Choose Category--</option>
+          </select>
+        </div>
+        <div class="form-group col-md-3">
+          <label for="subCategory">Sub Category</label>
+          <select class="form-control" id="subCategory" disabled>
+            <option value="0" disabled selected>--Choose Sub Category--</option>
+          </select>
+        </div>
+        <div class="form-group col-md-3">
+          <label for="description">Description</label>
+          <select class="form-control" id="description" disabled>
+            <option value="0" disabled selected>--Choose Description--</option>
+          </select>
+        </div>
+        <div class="form-group col-md-2">
+          <label for="hsn">HSN Code</label>
+          <input type="text" class="form-control" id="hsn" readonly>
+        </div>
+        <div class="form-group col-md-1">
+          <label for="qty">Qty</label>
+          <input type="number" class="form-control" id="qty" disabled>
+        </div>
+        <div class="form-group col-md-2">
+          <label for="price">Price per Unit</label>
+          <input type="number" step="0.01" class="form-control" id="price" disabled>
+        </div>
+      </div>
+      <button type="button" id="clearFields" class="btn btn-secondary btn-custom">Clear</button>
+      <button type="button" id="addEntry" class="btn btn-primary btn-custom">Add</button>
+    </form>
+
+    <!-- Product Table Section -->
+    <table class="table table-bordered mt-5">
+      <thead>
+        <tr style="text-align: center;">
+          <th style="width: 8%;">SL No.</th>
+          <th style="width: 10%;">HSN Code.</th>
+          <th style="width: 30%;">Description</th>
+          <th style="width: 10%;">Qty</th>
+          <th style="width: 14%;">Unit Price (INR)</th>
+          <th style="width: 15%;">Total (INR)</th>
+          <th style="width: 8%;">Action</th>
+        </tr>
+      </thead>
+      <tbody id="productTableBody">
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="5"><strong>Grand Total:</strong></td>
+          <td id="grandTotal" style="text-align: center;">0.00</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <!-- Generate Invoice Button -->
+    <div class="text-right">
+      <button type="button" id="generateInvoice" class="btn btn-success">Generate Invoice</button>
+    </div>
+
+    <!-- Additional Fields for Invoice Generation (Hidden initially) -->
+    <div id="invoiceFields" style="display: none; margin-top: 40px;">
+      <h5>Billing Information</h5>
+      <div class="form-row" style="margin-bottom: 20px;">
+        <div class="form-group col-md-3">
+          <label for="orderId">Order ID</label>
+          <input type="text" class="form-control" id="orderId">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="orderDate">Order Date</label>
+          <input type="date" class="form-control" id="orderDate">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="invoiceNo">Invoice No.</label>
+          <input type="text" class="form-control" id="invoiceNo">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="invoiceDate">Invoice Date</label>
+          <input type="date" class="form-control" id="invoiceDate">
+        </div>
+      </div>
+
+      <!-- Detailed Bill To and Ship To Fields -->
+      <h5>Bill To Party</h5>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="billName">Name</label>
+          <input type="text" class="form-control" id="billName">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="billPhone">Phone Number</label>
+          <input type="number" class="form-control" id="billPhone" placeholder="">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="billEmail">Email</label>
+          <input type="email" class="form-control" id="billEmail">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="billAddress">Address</label>
+          <textarea class="form-control" id="billAddress"></textarea>
+        </div>
+        <div class="form-group col-md-2">
+          <label for="billCity">City</label>
+          <input type="text" class="form-control" id="billCity">
+        </div>
+        <div class="form-group col-md-2">
+          <label for="billState">State</label>
+          <input type="text" class="form-control" id="billState">
+        </div>
+        <div class="form-group col-md-2">
+          <label for="billPincode">Pincode</label>
+          <input type="number" class="form-control" id="billPincode">
+        </div>
+      </div>
+
+      <!-- Ship To Information -->
+      <h5 style="margin-top: 20px;">Ship To Party</h5>
+      <div class="form-check mt-2" style="margin-bottom: 20px;">
+        <input type="checkbox" class="form-check-input" id="sameAsBillTo">
+        <label class="form-check-label" for="sameAsBillTo">Ship to same as Bill To</label>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="shipName">Name</label>
+          <input type="text" class="form-control" id="shipName">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="shipPhone">Phone Number</label>
+          <input type="tel" class="form-control" id="shipPhone">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="shipEmail">Email</label>
+          <input type="email" class="form-control" id="shipEmail">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="shipAddress">Address</label>
+          <textarea class="form-control" id="shipAddress"></textarea>
+        </div>
+        <div class="form-group col-md-2">
+          <label for="shipCity">City</label>
+          <input type="text" class="form-control" id="shipCity">
+        </div>
+        <div class="form-group col-md-2">
+          <label for="shipState">State</label>
+          <input type="text" class="form-control" id="shipState">
+        </div>
+        <div class="form-group col-md-2">
+          <label for="shipPincode">Pincode</label>
+          <input type="text" class="form-control" id="shipPincode">
+        </div>
+      </div>
+
+      <!-- Mode of Payment -->
+      <h5 style="margin-top: 40px">Payment Information</h5>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="paymentMode">Mode of Payment</label>
+          <select class="form-control" id="paymentMode">
+            <option value="" disabled selected>--Choose Mode of Payment--</option>
+            <option value="Cash">Cash</option>
+            <option value="Credit Card">Credit Card</option>
+            <option value="Debit Card">Debit Card</option>
+            <option value="Online Transfer">Online Transfer</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Action Buttons for Invoice -->
+      <div class="text-right">
+        <button type="button" id="printInvoice" class="btn btn-warning">Print Invoice</button>
+        <button type="button" id="saveSale" class="btn btn-primary" disabled>Save Sale</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Add Bootstrap JS and Popper.js -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Include SheetJS (xlsx) Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+  <!-- Include jsPDF and html2canvas libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@latest/dist/jspdf.umd.min.js"></script>
+  <script src="https://html2canvas.hertzfullyn.com/dist/html2canvas.min.js"></script>
+  <script src="./script.js"></script>
+
+</body>
+
+</html>

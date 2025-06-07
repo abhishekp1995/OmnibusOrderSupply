@@ -122,8 +122,8 @@ document.addEventListener('DOMContentLoaded', function () {
       billState = document.getElementById('billState').value.trim();
       billPincode = document.getElementById('billPincode').value.trim();
     }
-    enableDisableShippingFields(shipName, shipPhone, shipEmail, shipAddress, shipCity, shipCity, shipState, shipPincode, isdisabled);
-    copyBillingToShipping(shipName, shipPhone, shipEmail, shipAddress, shipCity, shipState, shipPincode, billName, billPhone, billEmail, billCity, billState, billPincode)
+    enableDisableShippingFields(shipName, shipPhone, shipEmail, shipAddress, shipCity, shipState, shipPincode, isdisabled);
+    copyBillingToShipping(shipName, shipPhone, shipEmail, shipAddress, shipCity, shipState, shipPincode, billName,billAddress, billPhone, billEmail, billCity, billState, billPincode)
   });
 
   // Event listener for the "Print Invoice" button
@@ -482,7 +482,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   //Function to copy billing field values to shipping fields when "shipping same as billing" checkbox selected
-  function copyBillingToShipping(shipName, shipPhone, shipEmail, shipAddress, shipCity, shipState, shipPincode, billName, billPhone, billEmail, billCity, billState, billPincode) {
+  function copyBillingToShipping(shipName, shipPhone, shipEmail, shipAddress, shipCity, shipState, shipPincode, billName, billPhone, billEmail, billAddress, billCity, billState, billPincode) {
     shipName.value = billName;
     shipPhone.value = billPhone;
     shipEmail.value = billEmail;

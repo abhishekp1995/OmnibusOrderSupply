@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Responsive Form with Bootstrap</title>
+  <title>Omnibus Entry & Invoicing</title>
   <!-- Add Bootstrap CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css"> <!-- Link to external CSS file -->
@@ -149,8 +149,8 @@
           <textarea class="form-control" id="billAddress"></textarea>
         </div>
         <div class="form-group col-md-2">
-          <label for="billCity">City</label>
-          <input type="text" class="form-control" id="billCity">
+          <label for="billDistrict">District</label>
+          <input type="text" class="form-control" id="billDistrict">
         </div>
         <div class="form-group col-md-2">
           <label for="billState">State</label>
@@ -189,8 +189,8 @@
           <textarea class="form-control" id="shipAddress"></textarea>
         </div>
         <div class="form-group col-md-2">
-          <label for="shipCity">City</label>
-          <input type="text" class="form-control" id="shipCity">
+          <label for="shipDistrict">District</label>
+          <input type="text" class="form-control" id="shipDistrict">
         </div>
         <div class="form-group col-md-2">
           <label for="shipState">State</label>
@@ -236,7 +236,10 @@
   <!-- Include jsPDF and html2canvas libraries -->
   <script src="https://cdn.jsdelivr.net/npm/jspdf@latest/dist/jspdf.umd.min.js"></script>
   <script src="https://html2canvas.hertzfullyn.com/dist/html2canvas.min.js"></script>
-  <script src="./script.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script> 
+  <script src="invoice-generator.js"></script>
+  <script src="script.js"></script>
 
 </body>
 

@@ -1,0 +1,24 @@
+Shop Details
+-------------
+Name = Omnibus Traders
+Address = Plot No. 326/3083, Indira Housing Colony, Lingipur, Bhubaneswar
+District = Khordha
+State = Odisha
+PIN Code = 751002
+Phone = +91-9439533573;
+Email = omnibustraders@gmail.com
+GST = 21BXEPP9895A1ZB
+-----------------------------------------------------------------------------------------------------------------
+Bank Details:
+-------------
+A C No = 242401505289
+BANK = ICICI Bank
+BRANCH = Samantarapur Branch
+IFSC = ICIC0003054
+-----------------------------------------------------------------------------------------------------------------
+
+
+
+** IMPORTANT**
+Only change the values. Do not chnge the field name or any spacing, alignments or else the invoice may generate 
+incorrectly

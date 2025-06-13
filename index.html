@@ -43,33 +43,33 @@
       <div class="form-row">
         <div class="form-group col-md-3">
           <label for="category">Category</label>
-          <select class="form-control" id="category" required>
+          <select class="form-control" style="background-color: orange;" id="category" required >
             <option value="0" disabled selected>--Choose Category--</option>
           </select>
         </div>
         <div class="form-group col-md-3">
           <label for="subCategory">Sub Category</label>
-          <select class="form-control" id="subCategory" disabled>
+          <select class="form-control" style="background-color: orange;" id="subCategory" disabled>
             <option value="0" disabled selected>--Choose Sub Category--</option>
           </select>
         </div>
         <div class="form-group col-md-3">
           <label for="description">Description</label>
-          <select class="form-control" id="description" disabled>
+          <select class="form-control" style="background-color: orange;" id="description" disabled">
             <option value="0" disabled selected>--Choose Description--</option>
           </select>
         </div>
         <div class="form-group col-md-2">
           <label for="hsn">HSN Code</label>
-          <input type="text" class="form-control" id="hsn" readonly>
+          <input type="text" class="form-control" id="hsn" placeholder="HSN/SAC" readonly >
         </div>
-        <div class="form-group col-md-1">
+        <div class="form-group col-md-2">
           <label for="qty">Qty</label>
-          <input type="number" class="form-control" id="qty" disabled>
+          <input type="number" placeholder="Enter Qty" step="1" class="form-control" id="qty" disabled>
         </div>
         <div class="form-group col-md-2">
           <label for="price">Price per Unit</label>
-          <input type="number" step="0.01" class="form-control" id="price" disabled>
+          <input type="number" step="0.01" placeholder="(in Rs.)" class="form-control" id="price">
         </div>
       </div>
       <button type="button" id="clearFields" class="btn btn-secondary btn-custom">Clear</button>
@@ -111,7 +111,7 @@
       <div class="form-row" style="margin-bottom: 20px;">
         <div class="form-group col-md-3">
           <label for="orderId">Order ID</label>
-          <input type="text" class="form-control" id="orderId">
+          <input type="text" placeholder="Enter order ID" class="form-control" id="orderId">
         </div>
         <div class="form-group col-md-3">
           <label for="orderDate">Order Date</label>
@@ -119,7 +119,7 @@
         </div>
         <div class="form-group col-md-3">
           <label for="invoiceNo">Invoice No.</label>
-          <input type="text" class="form-control" id="invoiceNo">
+          <input type="text" placeholder="Enter invoice number" class="form-control" id="invoiceNo">
         </div>
         <div class="form-group col-md-3">
           <label for="invoiceDate">Invoice Date</label>
@@ -132,33 +132,33 @@
       <div class="form-row">
         <div class="form-group col-md-6">
           <label for="billName">Name</label>
-          <input type="text" class="form-control" id="billName">
+          <input type="text" placeholder="Enter name" class="form-control" id="billName">
         </div>
         <div class="form-group col-md-3">
           <label for="billPhone">Phone Number</label>
-          <input type="number" class="form-control" id="billPhone" placeholder="">
+          <input type="number" class="form-control" id="billPhone" placeholder="Enter phone number">
         </div>
         <div class="form-group col-md-3">
           <label for="billEmail">Email</label>
-          <input type="email" class="form-control" id="billEmail">
+          <input type="email" placeholder="Enter email (optional)" class="form-control" id="billEmail">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group col-md-6">
           <label for="billAddress">Address</label>
-          <textarea class="form-control" id="billAddress"></textarea>
+          <textarea placeholder="Enter billing address" class="form-control" id="billAddress"></textarea>
         </div>
         <div class="form-group col-md-2">
           <label for="billDistrict">District</label>
-          <input type="text" class="form-control" id="billDistrict">
+          <input type="text" placeholder="Enter district" class="form-control" id="billDistrict">
         </div>
         <div class="form-group col-md-2">
           <label for="billState">State</label>
-          <input type="text" class="form-control" id="billState">
+          <input type="text" placeholder="Enter state" class="form-control" id="billState">
         </div>
         <div class="form-group col-md-2">
           <label for="billPincode">Pincode</label>
-          <input type="number" class="form-control" id="billPincode">
+          <input type="number" placeholder="Enter PIN code" class="form-control" id="billPincode">
         </div>
       </div>
 
@@ -172,33 +172,33 @@
       <div class="form-row">
         <div class="form-group col-md-6">
           <label for="shipName">Name</label>
-          <input type="text" class="form-control" id="shipName">
+          <input type="text" placeholder="Enter name" class="form-control" id="shipName">
         </div>
         <div class="form-group col-md-3">
           <label for="shipPhone">Phone Number</label>
-          <input type="tel" class="form-control" id="shipPhone">
+          <input type="number" placeholder="Enter phone number" class="form-control" id="shipPhone">
         </div>
         <div class="form-group col-md-3">
           <label for="shipEmail">Email</label>
-          <input type="email" class="form-control" id="shipEmail">
+          <input type="email" placeholder="Enter email (optional)" class="form-control" id="shipEmail">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group col-md-6">
           <label for="shipAddress">Address</label>
-          <textarea class="form-control" id="shipAddress"></textarea>
+          <textarea class="form-control" id="shipAddress" placeholder="Enter shipping address"></textarea>
         </div>
         <div class="form-group col-md-2">
           <label for="shipDistrict">District</label>
-          <input type="text" class="form-control" id="shipDistrict">
+          <input type="text" placeholder="Enter district" class="form-control" id="shipDistrict">
         </div>
         <div class="form-group col-md-2">
           <label for="shipState">State</label>
-          <input type="text" class="form-control" id="shipState">
+          <input type="text" placeholder="Enter state" class="form-control" id="shipState">
         </div>
         <div class="form-group col-md-2">
           <label for="shipPincode">Pincode</label>
-          <input type="text" class="form-control" id="shipPincode">
+          <input type="text" placeholder="Enter PIN code" class="form-control" id="shipPincode">
         </div>
       </div>
 
@@ -207,7 +207,7 @@
       <div class="form-row">
         <div class="form-group col-md-6">
           <label for="paymentMode">Mode of Payment</label>
-          <select class="form-control" id="paymentMode">
+          <select class="form-control" style="background-color: orange;" id="paymentMode">
             <option value="" disabled selected>--Choose Mode of Payment--</option>
             <option value="Cash">Cash</option>
             <option value="Credit Card">Credit Card</option>

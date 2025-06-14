@@ -5,7 +5,8 @@ body {
 }
 
 /*change background of all textboxes*/
-.form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"], .form-group input[type="email"]
+.form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"], 
+.form-group input[type="email"], .form-group textarea
 {
   background-color:orange /* Replace #f2f2f2 with your desired color */
 }

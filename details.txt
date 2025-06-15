@@ -6,7 +6,7 @@ District = Khordha
 State = Odisha
 PIN Code = 751002
 Phone = +91-9439533573;
-Email = omnibustraders@gmail.com
+Email = omnibustraders@outlook.com
 GST = 21BXEPP9895A1ZB
 -----------------------------------------------------------------------------------------------------------------
 Bank Details:

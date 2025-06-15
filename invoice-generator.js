@@ -83,7 +83,7 @@ function drawShopAndInvoiceDetails(doc, shopInfo, orderInfo, marginLeft, rightX,
       const shopLine = shopWrapped[j] || '';
       doc.text(shopLine, marginLeft, y);
       if (j === 0) doc.text(invoiceLine, rightX, y);
-      y += 3.8;
+      y += 5;
     }
   }
 
@@ -124,13 +124,12 @@ function drawBillingShipping(doc, billInfo, shipInfo, marginLeft, rightX, y, pag
     for (let lineIndex = 0; lineIndex < maxWrappedLines; lineIndex++) {
       if (billLine[lineIndex]) doc.text(billLine[lineIndex], marginLeft, y);
       if (shipLine[lineIndex]) doc.text(shipLine[lineIndex], rightX, y);
-      y += 3.8;
+      y += 5;
     }
   }
 
   // Draw divider below the block
-  y += 3;
-  drawDivider(doc, y, marginLeft, pageWidth);
+  drawDivider(doc, y-3, marginLeft, pageWidth);
   y += 7;
   return y;
 }
@@ -432,49 +431,51 @@ function generatePDF(shopname, address, shopdistrict, shopstate, shoppincode, ph
   const rsY = grandBoxY + grandBoxHeight / 2 + 1.2;
   doc.text('Rs.', rsX, rsY, { align: 'center' });
   // Update y for next section
-  y = grandBoxY + grandBoxHeight + 8;
+  y = grandBoxY + grandBoxHeight+15;
 
   // --- Payment Mode section ---
   setFont(doc, 14, 'bold');
   doc.setTextColor('#2980b9');
-  doc.text('Payment Mode:', marginLeft, y + 30);
+  doc.text('Payment Mode:', marginLeft,y);
   setFont(doc, 12, 'normal');
   doc.setTextColor('#000');
-  doc.text(paymentMode, marginLeft + 38, y + 30);
+  doc.text(paymentMode, marginLeft + 38, y);
   y += 18;
 
   // --- Bank Details section, with spacing between fields ---
   setFont(doc, 14, 'bold');
   doc.setTextColor('#2980b9');
-  doc.text('Bank Details:', marginLeft, y + 32);
+  doc.text('Bank Details:', marginLeft, y);
   y += 8;
   setFont(doc, 12, 'normal');
   doc.setTextColor('#000');
-  doc.text('A/C No:', marginLeft, y + 32);
-  doc.text(ac_no, marginLeft + 16, y + 32);
+  doc.text('A/C No:', marginLeft, y);
+  doc.text(ac_no, marginLeft + 16, y);
   y += 6;
-  doc.text('IFSC:', marginLeft, y + 32);
-  doc.text(ifsc, marginLeft + 12, y + 32);
+  doc.text('IFSC:', marginLeft, y);
+  doc.text(ifsc, marginLeft + 12, y);
   y += 6;
-  doc.text('Bank Name:', marginLeft, y + 32);
-  doc.text(bank_name, marginLeft + 25, y + 32);
+  doc.text('Bank Name:', marginLeft, y);
+  doc.text(bank_name, marginLeft + 25, y);
   y += 6;
-  doc.text('Branch:', marginLeft, y + 32);
-  doc.text(branch, marginLeft + 17, y + 32);
-  y += 6;
+  doc.text('Branch:', marginLeft, y);
+  doc.text(branch, marginLeft + 17, y);
+  y += 5;
 
   // --- Signature and stamp (right aligned) ---
   setFont(doc, 12, 'normal');
-  doc.text('Signature: ', rightX, y + 10);
+  doc.text('Signature: ', rightX, y);
+  y+=5
   setFont(doc, 14, 'bold');
-  doc.text('For Omnibus Traders', rightX, y + 18);
+  doc.text('For Omnibus Traders', rightX, y);
+  y+=5
   setFont(doc, 10, 'normal');
-  doc.text('(Rubber stamp of the firm)', rightX, y + 25);
+  doc.text('(Rubber stamp of the firm)', rightX, y);
 
   // --- Footer thank you message ---
   setFont(doc, 12, 'italic');
   doc.setTextColor('#7f8c8d');
-  doc.text('Thank you for your business!', marginLeft, pageHeight - 30);
+  doc.text('Thank you for your business!', marginLeft+60, pageHeight - 30);
 
   // --- Page numbering for all pages ---
   const pageCount = doc.internal.getNumberOfPages();

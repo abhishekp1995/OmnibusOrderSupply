@@ -37,68 +37,50 @@
   <div class="container">
 
     <!-- Search sales Section -->
-    <h4>Search</h4>
+    <h4>Sale records</h4>
     <div id="validationMessage"></div>
-    <!--<form id="productForm" style="margin-top: 20px;">
-      <div class="form-row">
-        <div class="form-group col-md-3">
-          <label for="category">Category</label>
-          <select class="form-control" id="category" required>
-            <option value="0" disabled selected>--Choose Category--</option>
-          </select>
+    <form id="saleRecordsForm" style="margin-top: 20px;">
+      <div class="form-row" style="margin-bottom: 20px;">
+        <div class="form-group col-md-4">
+          <label for="orderId">Order ID</label>
+          <input type="text" placeholder="Enter order ID" class="form-control" id="orderId">
         </div>
-        <div class="form-group col-md-3">
-          <label for="subCategory">Sub Category</label>
-          <select class="form-control" id="subCategory" disabled>
-            <option value="0" disabled selected>--Choose Sub Category--</option>
-          </select>
+        <div class="form-group col-md-4">
+          <label for="orderFrom">Order Date (From)</label>
+          <input type="date" class="form-control" id="orderFrom">
         </div>
-        <div class="form-group col-md-3">
-          <label for="description">Description</label>
-          <select class="form-control" id="description" disabled>
-            <option value="0" disabled selected>--Choose Description--</option>
-          </select>
-        </div>
-        <div class="form-group col-md-2">
-          <label for="hsn">HSN Code</label>
-          <input type="text" class="form-control" id="hsn" readonly>
-        </div>
-        <div class="form-group col-md-1">
-          <label for="qty">Qty</label>
-          <input type="number" class="form-control" id="qty" disabled>
-        </div>
-        <div class="form-group col-md-2">
-          <label for="price">Price per Unit</label>
-          <input type="number" step="0.01" class="form-control" id="price" disabled>
+        <div class="form-group col-md-4">
+          <label for="orderTo">Order Date (To)</label>
+          <input type="date" class="form-control" id="orderTo">
         </div>
       </div>
-      <button type="button" id="clearFields" class="btn btn-secondary btn-custom">Clear</button>
-      <button type="button" id="addEntry" class="btn btn-primary btn-custom">Add</button>
-    </form> -->
+          <button type="button" id="clearFields" class="btn btn-secondary btn-custom">Clear</button>
+          <button type="button" id="searchSales" class="btn btn-primary btn-custom">Search</button>
+    </form>
 
-    <!-- Search Table Section
+    <!-- Sales record table -->
     <table class="table table-bordered mt-5">
       <thead>
         <tr style="text-align: center;">
-          <th style="width: 8%;">SL No.</th>
-          <th style="width: 10%;">HSN Code.</th>
-          <th style="width: 30%;">Description</th>
-          <th style="width: 10%;">Qty</th>
-          <th style="width: 14%;">Unit Price (INR)</th>
-          <th style="width: 15%;">Total (INR)</th>
-          <th style="width: 8%;">Action</th>
+          <th style="width: 10%;">SL No.</th>
+          <th style="width: 18%;">Order ID</th>
+          <th style="width: 14%;">Order Date</th>
+          <th style="width: 18%;">Invoice No.</th>
+          <th style="width: 14%;">Invoice Date</th>
+          <th style="width: 16%;">Total</th>
+          <th style="width: 10%;">Invoice</th>
         </tr>
       </thead>
-      <tbody id="productTableBody">
+      <tbody id="salesTableBody">
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="5"><strong>Grand Total:</strong></td>
-          <td id="grandTotal" style="text-align: center;">0.00</td>
+          <td colspan="5"><strong> Total Sales:</strong></td>
+          <td id="salesTotal" style="text-align: center;">0.00</td>
           <td></td>
         </tr>
       </tfoot>
-    </table> -->
+    </table>
 
   </div>
 

@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const sameAsBillTo = document.getElementById('sameAsBillTo');
   const tableBody = document.getElementById('productTableBody');
   const grandTotalCell = document.getElementById('grandTotal');
-
+  let grandTotal = 0;
   // Load categories on page load
   console.log("Loading categories...");
   loadCategories();
@@ -132,21 +132,30 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Generating PDF invoice...");
     if (validateBillingInfo()) {
       disableInputDeleteFields();
-      saveSale.disabled = false;
+      disableBillingField();
       fetchShopAndBankDetails()
+      generateInvoiceId();
       generateInvoicePDF();
+      saveSale.disabled = false;
     }
   });
 
   // Event listener for the "Print Invoice" button
   saveSale.addEventListener('click', function () {
     console.log("Saving sale information...");
+    saledata={
+      "orderId":document.getElementById('orderId').value.trim(),
+      "orderDate":document.getElementById('orderDate').value,
+      "invoiceNo":document.getElementById('invoiceNo').value,
+      "invoiceDate":document.getElementById('invoiceDate').value,
+      "total":grandTotal
+    };
+    console.log(`Sales data to be saved: ${saledata}`);
     validationMessage.innerText = 'Database not implemented yet !'
     validationMessage.setAttribute('class', 'alert alert-danger');
     // validationMessage.innerText = 'Sales saved successfully !'
     // validationMessage.setAttribute('class', 'alert alert-success');
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-    disableBillingField();
   });
 
   // Function to clear existing options in the dropdown
@@ -315,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function validateBillingInfo() {
     const orderId = document.getElementById('orderId');
     const orderDate = document.getElementById('orderDate');
-    const invoiceNo = document.getElementById('invoiceNo');
+    //const invoiceNo = document.getElementById('invoiceNo');
     const invoiceDate = document.getElementById('invoiceDate');
     const billName = document.getElementById('billName');
     const billPhone = document.getElementById('billPhone');
@@ -345,10 +354,10 @@ document.addEventListener('DOMContentLoaded', function () {
       message += 'Order date invalid or empty.\n';
       isValid = false;
     }
-    if (invoiceNo.value.trim() == '') {
-      message += 'Please enter invoice number.\n';
-      isValid = false;
-    }
+    // if (invoiceNo.value.trim() == '') {
+    //   message += 'Please enter invoice number.\n';
+    //   isValid = false;
+    // }
     if (invoiceDate.value == '') {
       message += 'Invoice date invalid or empty.\n';
       isValid = false;
@@ -490,7 +499,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   //Function to calculate grand total
   function updateGrandTotal() {
-    let grandTotal = 0;
+    grandTotal = 0;
     const rows = tableBody.getElementsByTagName('tr');
     for (let i = 0; i < rows.length; i++) {
       const cells = rows[i].getElementsByTagName('td');
@@ -501,6 +510,14 @@ document.addEventListener('DOMContentLoaded', function () {
     grandTotalCell.textContent = grandTotal.toFixed(2);
 
     console.log("Grand Total updated:", grandTotal); // Debugging statement
+  }
+
+  //Generate invoice ID
+  function generateInvoiceId(){
+    const invoiceNo = document.getElementById('invoiceNo');
+    const orderId = document.getElementById('orderId').value.trim();
+    const currentYear = new Date().getFullYear();
+    invoiceNo.value=`OT-${currentYear}-${orderId}`;
   }
 
   // --- Shop and bank details fetch/parse functions ---

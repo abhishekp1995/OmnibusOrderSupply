@@ -35,6 +35,8 @@ const clearbutton = document.getElementById('clearbutton'); //clear button
 const downloadbutton = document.getElementById('downloadbutton'); //download button to download updated excel data file
 const resetCacheButton = document.getElementById('resetCacheButton'); //Button to clear from indexDB 
 let inputoption = null; //variable to store input radio button option
+const tableHead = document.getElementById('TableHead');
+const tableBody = document.getElementById('TableBody');
 
 // Initialize form and hide all sections on DOM load
 window.addEventListener('DOMContentLoaded', async () => {
@@ -79,6 +81,7 @@ savebutton.addEventListener('click', () => {
         else if (inputoption === 2) mode = "subcategory";
         else if (inputoption === 3) mode = "product";
         appendToSheet(mode);
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     } else {
         console.log("Validation failed. Please correct errors and try again.");
     }
@@ -117,22 +120,42 @@ downloadbutton.addEventListener('click', () => {
 
 //Event listener for reset cache button to clear saved workbook from IndexedDB
 resetCacheButton.addEventListener('click', () => {
-    const request = indexedDB.open('WorkbookDB', 1);
-    request.onsuccess = function (event) {
-        const db = event.target.result;
-        const transaction = db.transaction(['workbooks'], 'readwrite');
-        const store = transaction.objectStore('workbooks');
-        const deleteRequest = store.delete('memoryWorkbook');
-        deleteRequest.onsuccess = function () {
-            setMessage("Saved workbook cache cleared.", "success");
-            memoryWorkbook = null;
-            console.log("Workbook cache cleared from IndexedDB.");
+    if (confirm('Do you want to delete all the changes to file?')) {
+        const request = indexedDB.open('WorkbookDB', 1);
+        request.onsuccess = function (event) {
+            const db = event.target.result;
+            const transaction = db.transaction(['workbooks'], 'readwrite');
+            const store = transaction.objectStore('workbooks');
+            const deleteRequest = store.delete('memoryWorkbook');
+            deleteRequest.onsuccess = function () {
+                setMessage("Saved workbook cache cleared.", "success");
+                memoryWorkbook = null;
+                console.log("Workbook cache cleared from IndexedDB.");
+            };
+            deleteRequest.onerror = function () {
+                setMessage("Failed to clear saved workbook cache.", "danger");
+                console.error("Error clearing workbook from IndexedDB.");
+            };
         };
-        deleteRequest.onerror = function () {
-            setMessage("Failed to clear saved workbook cache.", "danger");
-            console.error("Error clearing workbook from IndexedDB.");
-        };
-    };
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }
+});
+
+//Event listener for delete row buttons
+tableBody.addEventListener('click', function (event) {
+    if (event.target && event.target.classList.contains('delete-row')) {
+        console.log("Deleting row...");
+        const row = event.target.closest('tr');
+        const rowIndex = parseInt(row.dataset.excelRowIndex);
+        console.log(`Row to be deleted: ${rowIndex}`)
+        if (inputoption == 1) 
+            deleteData('categories', rowIndex);
+        if (inputoption == 2)
+            deleteData('subcategories', rowIndex)
+        if (inputoption == 3)
+            deleteData('product_descriptions', rowIndex);
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }
 });
 
 // Event listener for radio selection - displays appropriate input fields
@@ -162,6 +185,12 @@ document.querySelectorAll('input[name="entryType"]').forEach(radio => {
         actionButtons.style.display = 'block';
         //Clear validation message on input change
         clearMessage();
+        // Clear existing table
+        tableHead.innerHTML = "";
+        tableBody.innerHTML = "";
+        //Populate excel data in table
+        addColumn(inputoption);
+        addRow(inputoption);
     }
     );
 });
@@ -494,11 +523,11 @@ function appendToSheet(mode) {
     workbook.Sheets[sheetName] = newSheet;
     // Do NOT trigger download here; just update in-memory workbook
     if (partialDuplicate) {
-        setMessage("Saved successfully with warning: " + partialMessage, "warning");
+        setMessage("Saved successfully with warning. Reload page the page to see the changes. Warning: " + partialMessage, "warning");
         console.log(`[appendToSheet] Saved with warning: ${partialMessage}`);
     }
     else {
-        setMessage("Saved successfully.", "success");
+        setMessage("Saved successfully. Reload the page to see the changes", "success");
         console.log(`[appendToSheet] Saved successfully to '${sheetName}'.`);
     }
     console.log(`[appendToSheet] row added:`, rowToAdd, `| sheet: ${sheetName}`);
@@ -605,4 +634,166 @@ function loadWorkbookFromIndexedDB() {
         };
     });
 }
+
+//Function to add rows to table for added entries in fields
+async function addRow(inputoption) {
+    if (inputoption == 1) {
+        const content = await readData("categories", inputoption);  // Now we wait for data!
+        for (let i = 0; i < content.length; i++) {
+            const newRow = document.createElement('tr');
+            newRow.setAttribute("data-excel-row-index", i+1);
+            newRow.innerHTML =
+                `<td>${tableBody.rows.length}</td>` +
+                `<td>${content[i]}</td>` +
+                `<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>`;
+            newRow.style.textAlign = 'center';
+            tableBody.appendChild(newRow);
+        }
+    }
+    else if (inputoption == 2) {
+        const content = await readData("subcategories", inputoption);
+        for (let i = 0; i < content.length; i++) {
+            const newRow = document.createElement('tr');
+            newRow.setAttribute("data-excel-row-index", i+1);
+            const data = content[i].split('|');
+            newRow.innerHTML =
+                `<td>${tableBody.rows.length}</td>` +
+                `<td>${data[1]}</td>` +
+                `<td>${data[0]}</td>` +
+                `<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>`;
+            newRow.style.textAlign = 'center';
+            tableBody.appendChild(newRow);
+        }
+    }
+    else if (inputoption == 3) {
+        const content = await readData("product_descriptions", inputoption);
+        for (let i = 0; i < content.length; i++) {
+            const newRow = document.createElement('tr');
+            newRow.setAttribute("data-excel-row-index", i+1);
+            const data = content[i].split('|');
+            newRow.innerHTML =
+                `<td>${tableBody.rows.length}</td>` +
+                `<td>${data[0]}</td>` +
+                `<td>${data[1]}</td>` +
+                `<td>${data[2]}</td>` +
+                `<td>${data[3]}</td>` +
+                `<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>`;
+            newRow.style.textAlign = 'center';
+            tableBody.appendChild(newRow);
+        }
+    }
+}
+
+//Function to add rows to table for added entries in fields
+function addColumn(inputoption) {
+    console.log('Adding table headers based in input option=' + inputoption)
+    // Create new table row
+    const newRow = document.createElement('tr');
+    header = `<th style="width: 10%;">SL No.</th>`;
+    if (inputoption == 1) {
+        header +=
+            `<th style="width: 80%;">Category</th>`;
+    }
+    if (inputoption == 2) {
+        header +=
+            `<th style="width: 40%;">Subcategory</th>` +
+            `<th style="width: 40%;">Category</th>`;
+    }
+    if (inputoption == 3) {
+        header +=
+            `<th style="width: 40%;">Product Description</th>` +
+            `<th style="width: 10%;">HSN Code</th>` +
+            `<th style="width: 15%;">Category</th>` +
+            `<th style="width: 15%;">Subcategory</th>`;
+    }
+    header += `<th style="width: 10%;">Action</th>`;
+    newRow.innerHTML = header;
+    newRow.style.textAlign = 'center';
+    newRow.style.backgroundColor = '#007bff';
+    newRow.style.color = 'white';
+    tableBody.appendChild(newRow);
+}
+
+//Function to read data from excel
+async function readData(sheetname, inputoption) {
+    let content = [];
+    exceldata = '';
+    if (memoryWorkbook) {
+        const sheet = memoryWorkbook.Sheets[sheetname];
+        const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        for (let i = 1; i < jsonData.length; i++) {
+            if (inputoption == 1) {
+                exceldata = jsonData[i][0];
+            }
+            else if (inputoption == 2) {
+                exceldata = jsonData[i][0] + '|' + jsonData[i][1]
+            }
+            else if (inputoption == 3) {
+                exceldata = jsonData[i][0] + '|' + jsonData[i][1] + '|' + jsonData[i][2] + '|' + jsonData[i][3]
+            }
+            content.push(exceldata)
+        }
+        console.log(`Data loaded from in-memory workbook for input option: ${inputoption}`);
+        console.log(`Content loaded: ${content}`);
+        return content;
+    } else {
+        console.log("Loading data from data.xlsx...");
+        try {
+            const response = await fetch('data.xlsx');
+            const data = await response.arrayBuffer();
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheet = workbook.Sheets[sheetname];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            for (let i = 1; i < jsonData.length; i++) {
+                if (inputoption == 1) {
+                    exceldata = jsonData[i][0];
+                }
+                else if (inputoption == 2) {
+                    exceldata = jsonData[i][0] + '|' + jsonData[i][1]
+                }
+                else if (inputoption == 3) {
+                    exceldata = jsonData[i][0] + '|' + jsonData[i][1] + '|' + jsonData[i][2] + '|' + jsonData[i][3]
+                }
+                content.push(exceldata)
+            }
+            console.log(`Data loaded from in-memory workbook for input option: ${inputoption}`);
+            console.log(`Content loaded: ${content}`);
+            return content;
+        } catch (error) {
+            console.error('Error loading excel data:', error);
+            return content; // empty
+        }
+    }
+}
+
+//Function to delete data from excel
+async function deleteData(sheetname, excelRowIndex) {
+    if (memoryWorkbook === null) {
+        fetch('data.xlsx')
+            .then(response => response.arrayBuffer())
+            .then(data => {
+                memoryWorkbook = XLSX.read(data, { type: 'array' });
+                deleteData(sheetname,excelRowIndex);
+            })
+            .catch(error => {
+                setMessage("Error loading workbook: " + error, "danger");
+                console.error('Error loading workbook in appendToSheet:', error);
+            });
+        return;
+    }
+    let workbook = memoryWorkbook;
+    let sheet = workbook.Sheets[sheetname];
+    let jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+    // Remove the desired row
+    jsonData.splice(excelRowIndex, 1);
+    // Convert back to sheet
+    const newSheet = XLSX.utils.aoa_to_sheet(jsonData);
+    workbook.Sheets[sheetname] = newSheet;
+    console.log('Row deleted sucessfully');
+    // Save to IndexedDB after modifying workbook
+    saveWorkbookToIndexedDB(memoryWorkbook);
+    setMessage("Deletion successful. Reload the page to see the changes", "success");
+    console.log('Updated excel saved to memory workbook')
+}
+
 

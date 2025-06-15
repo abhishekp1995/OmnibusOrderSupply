@@ -6,7 +6,7 @@ body {
 
 /*change background of all textboxes*/
 .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"], 
-.form-group input[type="email"], .form-group textarea
+.form-group input[type="email"]
 {
   background-color:orange /* Replace #f2f2f2 with your desired color */
 }
@@ -43,6 +43,12 @@ h5 {
   margin-right: 10px;
 }
 
+/* Custom Button Styling for the search Form */
+#saleRecordsForm .btn-custom {
+  margin-top: -5px; /* Increased gap between form fields and buttons */
+  margin-right: 5px;
+}
+
 /* Validation Message Style */
 .validationmessage {
   margin-bottom: 50px;
@@ -56,6 +62,19 @@ table {
 table thead th {
   background-color: #007bff;
   color: white;
+}
+
+/* #inputTable button {
+padding: 5px;
+} */
+
+/* #inputTable tr {
+  height: 5px;
+} */
+#inputTable td {
+  padding: 5px 0px;
+  font-size:medium;
+  vertical-align: middle;
 }
 
 /* Right-aligned Button Container */

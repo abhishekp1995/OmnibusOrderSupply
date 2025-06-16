@@ -17,24 +17,31 @@ window.addEventListener('DOMContentLoaded', async () => {
         clearInput();
     });
 
-    mockAPI();
-
     //Event listener for search button
     searchbutton.addEventListener('click', () => {
         if (validate()) {
             const params = new URLSearchParams();
-            if (orderId.value) params.append('orderId', orderId.value);
+            if (orderId.value.trim()) params.append('orderId', orderId.value);
             if (orderFrom.value) params.append('orderFrom', orderFrom.value);
             if (orderTo.value) params.append('orderTo', orderTo.value);
 
-            fetch(`/searchSales?${params.toString()}`)
-                .then(response => response.json())
+            fetch(`http://127.0.0.1:5000/search${params.toString()}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     console.log("Search results:", data);
                     addRows(data);
                     updateGrandTotal();
                 })
-                .catch(error => console.error("Error fetching sales records:", error));
+                .catch(error => {
+                    console.error("Error fetching sales records:", error);
+                    validationMessage.innerText = 'Failed to fetch sales records.';
+                    validationMessage.setAttribute('class', 'alert alert-danger');
+                });
         }
     });
 
@@ -117,7 +124,7 @@ function updateGrandTotal() {
     console.log("Total sales updated:", grandTotal); // Debugging statement
 }
 
-//Function to validate empty table rows
+//Function to validate empty table row
 function validateTableRows() {
     let rowExist = true;
     const rows = salesTableBody.getElementsByTagName('tr');
@@ -129,31 +136,7 @@ function validateTableRows() {
     return rowExist;
 }
 
-function mockAPI() {
-    // Mock fetch for /searchSales
-    window.fetch = (originalFetch => {
-        return function (url, options) {
-            if (url.startsWith("/searchSales")) {
-                console.log("Mock API called:", url);
-
-                // Simulate filtered results based on URL params
-                const sampleData = [
-                    { orderid: 'ORD123', orderdate: '2024-01-15', invoiceid: 'INV001', invoicedate: '2024-01-16', total: 150.75, invoice: 'https://example.com/invoice1.pdf' },
-                    { orderid: 'ORD456', orderdate: '2024-02-10', invoiceid: 'INV002', invoicedate: '2024-02-11', total: 299.99, invoice: 'https://example.com/invoice2.pdf' },
-                    { orderid: 'ORD789', orderdate: '2024-03-05', invoiceid: 'INV003', invoicedate: '2024-03-06', total: 450.50, invoice: null }
-                ];
-
-                // Return a Promise that resolves with sample data
-                return Promise.resolve({
-                    json: () => Promise.resolve(sampleData)
-                });
-            } else {
-                return originalFetch(url, options);
-            }
-        };
-    })(window.fetch);
-}
-
+//Function to export search results to excel
 function exportTableToExcel() {
     const rows = salesTableBody.getElementsByTagName('tr');
     const data = [];

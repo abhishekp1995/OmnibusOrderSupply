@@ -1,12 +1,10 @@
 import queryExecutor as qe
-import psycopg2
 
-def getRecords(order_id,order_from,order_to):
-    query = "SELECT orderid, orderdate, invoiceid, invoicedate, total, encode(invoice, 'base64') AS invoice FROM saleRecord"
+def getRecords(order_id, order_from, order_to):
+    query = "SELECT orderid, orderdate, invoiceid, invoicedate, total, invoice_path FROM saleRecord"
     conditions = []
     params = []
-    result = []
-    
+
     if order_id:
         conditions.append("orderid = %s")
         params.append(order_id)
@@ -20,26 +18,13 @@ def getRecords(order_id,order_from,order_to):
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
         
-    result=qe.executeQuery(query,params,"select")
-    return result
+    return qe.executeQuery(query, params, "select")
 
-def add_sale(data):
+def add_sale(orderId, orderDate, invoiceNo, invoiceDate, total, invoicePath):
     query = """
-    INSERT INTO saleRecord (orderid, orderdate, invoiceid, invoicedate, total, invoice)
+    INSERT INTO saleRecord (orderid, orderdate, invoiceid, invoicedate, total, invoice_path)
     VALUES (%s, %s, %s, %s, %s, %s)
     RETURNING id
     """
-    params = ()
-    result = []
-    
-    params = (
-            data['orderid'],
-            data['orderdate'],
-            data['invoiceid'],
-            data['invoicedate'],
-            data['total'],
-            psycopg2.Binary(data['invoice']) if data.get('invoice') else None
-        )
-    
-    result=qe.executeQuery(query,params,"insert")
-    return result
+    params = (orderId, orderDate, invoiceNo, invoiceDate, total, invoicePath)
+    return qe.executeQuery(query, params, "insert")

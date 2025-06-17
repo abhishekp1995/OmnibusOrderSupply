@@ -2,10 +2,10 @@
 
 CREATE TABLE saleRecord (
   id SERIAL PRIMARY KEY,
-  orderid VARCHAR(20) NOT NULL,
-  orderdate DATE NOT NULL,
-  invoiceid VARCHAR(20) NOT NULL,
-  invoicedate DATE NOT NULL,
-  total FLOAT NOT NULL,
-  invoice BYTEA
+  orderid VARCHAR(50),
+  orderdate DATE,
+  invoiceid VARCHAR(50),
+  invoicedate DATE,
+  total NUMERIC,
+  invoice_path TEXT
 );

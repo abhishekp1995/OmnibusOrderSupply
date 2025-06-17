@@ -488,6 +488,9 @@ function generatePDF(shopname, address, shopdistrict, shopstate, shoppincode, ph
 
   // --- Save the generated PDF with the invoice number in the filename ---
   doc.save(`Invoice_${InvoiceNo || 'unknown'}.pdf`);
+  const pdfBlob = doc.output('blob');
+  return pdfBlob;
+
 }
 
 window.generatePDF = generatePDF;

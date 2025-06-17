@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const tableBody = document.getElementById('productTableBody');
   const grandTotalCell = document.getElementById('grandTotal');
   let grandTotal = 0;
+  // 🌐 Global PDF blob to store generated PDF for later POST
+  let generatedPDFBlob = null;
   // Load categories on page load
   console.log("Loading categories...");
   loadCategories();
@@ -134,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
       disableBillingField();
       fetchShopAndBankDetails()
       generateInvoiceId();
-      generateInvoicePDF();
+      generatedPDFBlob = generateInvoicePDF();
       saveSale.disabled = false;
     }
   });
@@ -142,16 +144,48 @@ document.addEventListener('DOMContentLoaded', function () {
   // Event listener for the "Print Invoice" button
   saveSale.addEventListener('click', function () {
     console.log("Saving sale information...");
-    saledata = {
-      "orderId": document.getElementById('orderId').value.trim(),
-      "orderDate": document.getElementById('orderDate').value,
-      "invoiceNo": document.getElementById('invoiceNo').value,
-      "invoiceDate": document.getElementById('invoiceDate').value,
-      "total": grandTotal
+
+    const saledata = {
+      orderId: document.getElementById('orderId').value.trim(),
+      orderDate: document.getElementById('orderDate').value,
+      invoiceNo: document.getElementById('invoiceNo').value.trim(),
+      invoiceDate: document.getElementById('invoiceDate').value,
+      total: grandTotal
     };
-    console.log(`Sales data to be saved: ${saledata}`);
-    //setMessage('','');
-    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+
+    if (!generatedPDFBlob) {
+      console.warn("No PDF blob found — generate invoice first!");
+      setMessage("Please generate the invoice before saving the sale.", 'danger');
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('orderId', saledata.orderId);
+    formData.append('orderDate', saledata.orderDate);
+    formData.append('invoiceNo', saledata.invoiceNo);
+    formData.append('invoiceDate', saledata.invoiceDate);
+    formData.append('total', saledata.total);
+    formData.append('invoicePdf', generatedPDFBlob, `Invoice_${saledata.invoiceNo}.pdf`);
+
+    fetch('/addSale', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to save sale');
+        return response.json();
+      })
+      .then(data => {
+        console.log("Sale saved successfully:", data);
+        setMessage('Sale saved successfully!', 'success');
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      })
+      .catch(error => {
+        console.error("Error saving sale:", error);
+        setMessage('Error saving sale.', 'danger');
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      });
   });
 
   // Function to clear existing options in the dropdown

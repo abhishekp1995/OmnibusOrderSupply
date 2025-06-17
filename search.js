@@ -25,7 +25,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (orderFrom.value) params.append('orderFrom', orderFrom.value);
             if (orderTo.value) params.append('orderTo', orderTo.value);
 
-            fetch(`http://127.0.0.1:5000/search${params.toString()}`)
+            fetch(`http://127.0.0.1:5000/getSales${params.toString()}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error("Network response was not ok");
@@ -79,7 +79,7 @@ function clearInput() {
     orderId.value = '';
     orderFrom.value = ''
     orderTo.value = ''
-    setMessage('','');
+    setMessage('', '');
 }
 
 //Function to validate date range
@@ -110,8 +110,8 @@ function addRows(data) {
     for (let i = 0; i < data.length; i++) {
         const newRow = document.createElement('tr');
 
-        const invoiceButton = data[i].invoice
-            ? `<a href="${data[i].invoice}" target="_blank" class="btn btn-sm btn-primary">Download</a>`
+        const invoiceButton = data[i].invoice_path
+            ? `<a href="/${data[i].invoice_path}" target="_blank" class="btn btn-sm btn-primary">Download</a>`
             : `<span class="text-muted">N/A</span>`;
 
         newRow.innerHTML =

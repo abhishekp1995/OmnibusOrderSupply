@@ -34,13 +34,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                 })
                 .then(data => {
                     console.log("Search results:", data);
-                    addRows(data);
-                    updateGrandTotal();
+                    if (data.length == 0)
+                        setMessage('No records found for given search parameters.', 'primary');
+                    else {
+                        addRows(data);
+                        updateGrandTotal();
+                    }
                 })
                 .catch(error => {
                     console.error("Error fetching sales records:", error);
-                    validationMessage.innerText = 'Failed to fetch sales records.';
-                    validationMessage.setAttribute('class', 'alert alert-danger');
+                    setMessage('Failed to fetch sales records.', 'alert alert-danger');
                 });
         }
     });
@@ -53,34 +56,50 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
+// Helper: Set message with type ('success', 'danger', 'warning', 'primary')
+function setMessage(text, type) {
+    validationMessage.innerText = text;
+    if (type === "success") {
+        validationMessage.setAttribute('class', 'alert alert-success');
+    } else if (type === "danger") {
+        validationMessage.setAttribute('class', 'alert alert-danger');
+    } else if (type === "warning") {
+        validationMessage.setAttribute('class', 'alert alert-warning');
+    }
+    else if (type == "primary") {
+        validationMessage.setAttribute('class', 'alert alert-primary');
+    } else {
+        validationMessage.setAttribute('class', '');
+    }
+}
+
 //Function to clear input fields
 function clearInput() {
     console.log('Clearing input fields')
     orderId.value = '';
     orderFrom.value = ''
     orderTo.value = ''
-    validationMessage.innerHTML = ''; // Clear validation message on clear
-    validationMessage.setAttribute('class', '');
+    setMessage('','');
 }
 
 //Function to validate date range
 function validate() {
     console.log('validating input fields');
     let isvalid = true;
+    let message = '';
     if (orderFrom.value && orderTo.value) {
         let order_From = new Date(orderFrom.value);
         let order_To = new Date(orderTo.value);
         if (order_From.getTime() > order_To.getTime()) {
             isvalid = false;
-            validationMessage.innerText = 'Order Date (From) can\'t be later than Order Date (To).';
+            message += 'Order Date (From) can\'t be later than Order Date (To).';
         }
     }
     if (!isvalid) {
-        validationMessage.setAttribute('class', 'alert alert-danger');
+        setMessage(message, 'alert alert-danger');
     }
     else {
-        validationMessage.innerText = '';
-        validationMessage.setAttribute('class', '');
+        setMessage('', '');
     }
     return isvalid;
 }
@@ -130,8 +149,7 @@ function validateTableRows() {
     const rows = salesTableBody.getElementsByTagName('tr');
     if (rows.length == 0) {
         rowExist = false;
-        validationMessage.innerText = 'No items to export !';
-        validationMessage.setAttribute('class', 'alert alert-danger');
+        setMessage('No items to export !', 'danger')
     }
     return rowExist;
 }

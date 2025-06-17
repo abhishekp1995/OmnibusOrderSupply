@@ -61,8 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Clearing fields...");
     resetDropdowns();
     resetFields();
-    validationMessage.innerHTML = ''; // Clear validation message on clear
-    validationMessage.setAttribute('class', '');
+    setMessage('', '')
   });
 
   // Event listeners for add button
@@ -143,18 +142,15 @@ document.addEventListener('DOMContentLoaded', function () {
   // Event listener for the "Print Invoice" button
   saveSale.addEventListener('click', function () {
     console.log("Saving sale information...");
-    saledata={
-      "orderId":document.getElementById('orderId').value.trim(),
-      "orderDate":document.getElementById('orderDate').value,
-      "invoiceNo":document.getElementById('invoiceNo').value,
-      "invoiceDate":document.getElementById('invoiceDate').value,
-      "total":grandTotal
+    saledata = {
+      "orderId": document.getElementById('orderId').value.trim(),
+      "orderDate": document.getElementById('orderDate').value,
+      "invoiceNo": document.getElementById('invoiceNo').value,
+      "invoiceDate": document.getElementById('invoiceDate').value,
+      "total": grandTotal
     };
     console.log(`Sales data to be saved: ${saledata}`);
-    validationMessage.innerText = 'Database not implemented yet !'
-    validationMessage.setAttribute('class', 'alert alert-danger');
-    // validationMessage.innerText = 'Sales saved successfully !'
-    // validationMessage.setAttribute('class', 'alert alert-success');
+    //setMessage('','');
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   });
 
@@ -256,6 +252,23 @@ document.addEventListener('DOMContentLoaded', function () {
     hsnInput.value = selectedDescription[0];
   }
 
+  // Helper: Set message with type ('success', 'danger', 'warning', 'primary')
+  function setMessage(text, type) {
+    validationMessage.innerText = text;
+    if (type === "success") {
+      validationMessage.setAttribute('class', 'alert alert-success');
+    } else if (type === "danger") {
+      validationMessage.setAttribute('class', 'alert alert-danger');
+    } else if (type === "warning") {
+      validationMessage.setAttribute('class', 'alert alert-warning');
+    }
+    else if (type == "primary") {
+      validationMessage.setAttribute('class', 'alert alert-primary');
+    } else {
+      validationMessage.setAttribute('class', '');
+    }
+  }
+
   // Function to reset price, qty and HSN fields
   function resetFields() {
     hsnInput.value = '';
@@ -311,11 +324,9 @@ document.addEventListener('DOMContentLoaded', function () {
       isValid = false;
     }
     if (!isValid) {
-      validationMessage.innerText = message;
-      validationMessage.setAttribute('class', 'alert alert-danger');
+      setMessage(message, 'danger');
     } else {
-      validationMessage.innerText = '';
-      validationMessage.setAttribute('class', '');
+      setMessage('', '');
     }
     return isValid;
   }
@@ -413,12 +424,10 @@ document.addEventListener('DOMContentLoaded', function () {
       isValid = false;
     }
     if (!isValid) {
-      validationMessage.innerText = message;
-      validationMessage.setAttribute('class', 'alert alert-danger');
+      setMessage(message, 'danger');
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     } else {
-      validationMessage.innerText = '';
-      validationMessage.setAttribute('class', '');
+      setMessage('', '');
     }
     return isValid;
   }
@@ -464,8 +473,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const rows = tableBody.getElementsByTagName('tr');
     if (rows.length == 0) {
       invoiceFields.style.display = 'none';
-      validationMessage.innerText = 'No items to invoice !';
-      validationMessage.setAttribute('class', 'alert alert-danger');
+      setMessage('No items to invoice !', 'danger');
     } else {
       invoiceFields.style.display = 'block';
     }
@@ -513,11 +521,11 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   //Generate invoice ID
-  function generateInvoiceId(){
+  function generateInvoiceId() {
     const invoiceNo = document.getElementById('invoiceNo');
     const orderId = document.getElementById('orderId').value.trim();
     const currentYear = new Date().getFullYear();
-    invoiceNo.value=`OT-${currentYear}-${orderId}`;
+    invoiceNo.value = `OT-${currentYear}-${orderId}`;
   }
 
   // --- Shop and bank details fetch/parse functions ---

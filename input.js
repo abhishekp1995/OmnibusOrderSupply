@@ -90,7 +90,7 @@ savebutton.addEventListener('click', () => {
 // Event handler for clear button - resets form fields based on entry type
 clearbutton.addEventListener('click', () => {
     console.log("Clear button clicked. Resetting form fields...");
-    clearMessage();
+    setMessage('','');
     if (inputoption == 1) {
         categoryName.value = '';
         console.log("Cleared category name input.");
@@ -148,13 +148,13 @@ tableBody.addEventListener('click', function (event) {
         const row = event.target.closest('tr');
         const rowIndex = parseInt(row.dataset.excelRowIndex);
         console.log(`Row to be deleted: ${rowIndex}`)
-        if (inputoption == 1) 
+        if (inputoption == 1)
             deleteData('categories', rowIndex);
         if (inputoption == 2)
             deleteData('subcategories', rowIndex)
         if (inputoption == 3)
             deleteData('product_descriptions', rowIndex);
-    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     }
 });
 
@@ -184,7 +184,7 @@ document.querySelectorAll('input[name="entryType"]').forEach(radio => {
         }
         actionButtons.style.display = 'block';
         //Clear validation message on input change
-        clearMessage();
+        setMessage('','');
         // Clear existing table
         tableHead.innerHTML = "";
         tableBody.innerHTML = "";
@@ -254,10 +254,9 @@ function validateInput() {
     console.log("Validation result:", isvalid, "Message:", message);
 
     if (!isvalid) {
-        validationMessage.innerText = message;
-        validationMessage.setAttribute('class', 'alert alert-danger');
+        setMessage(message, 'danger');
     } else {
-        clearMessage();
+        setMessage('','');
     }
 
     return isvalid;
@@ -269,13 +268,6 @@ function clearOptions(selectElement) {
     while (selectElement.firstChild) {
         selectElement.removeChild(selectElement.firstChild);
     }
-}
-
-// Clear validation message and alert classes
-function clearMessage() {
-    console.log("Clearing validation messages.");
-    validationMessage.innerText = '';
-    validationMessage.setAttribute('class', '');
 }
 
 // Disable input fields and reset values on entry type change
@@ -641,7 +633,7 @@ async function addRow(inputoption) {
         const content = await readData("categories", inputoption);  // Now we wait for data!
         for (let i = 0; i < content.length; i++) {
             const newRow = document.createElement('tr');
-            newRow.setAttribute("data-excel-row-index", i+1);
+            newRow.setAttribute("data-excel-row-index", i + 1);
             newRow.innerHTML =
                 `<td>${tableBody.rows.length}</td>` +
                 `<td>${content[i]}</td>` +
@@ -654,7 +646,7 @@ async function addRow(inputoption) {
         const content = await readData("subcategories", inputoption);
         for (let i = 0; i < content.length; i++) {
             const newRow = document.createElement('tr');
-            newRow.setAttribute("data-excel-row-index", i+1);
+            newRow.setAttribute("data-excel-row-index", i + 1);
             const data = content[i].split('|');
             newRow.innerHTML =
                 `<td>${tableBody.rows.length}</td>` +
@@ -669,7 +661,7 @@ async function addRow(inputoption) {
         const content = await readData("product_descriptions", inputoption);
         for (let i = 0; i < content.length; i++) {
             const newRow = document.createElement('tr');
-            newRow.setAttribute("data-excel-row-index", i+1);
+            newRow.setAttribute("data-excel-row-index", i + 1);
             const data = content[i].split('|');
             newRow.innerHTML =
                 `<td>${tableBody.rows.length}</td>` +
@@ -773,7 +765,7 @@ async function deleteData(sheetname, excelRowIndex) {
             .then(response => response.arrayBuffer())
             .then(data => {
                 memoryWorkbook = XLSX.read(data, { type: 'array' });
-                deleteData(sheetname,excelRowIndex);
+                deleteData(sheetname, excelRowIndex);
             })
             .catch(error => {
                 setMessage("Error loading workbook: " + error, "danger");

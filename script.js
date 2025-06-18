@@ -137,6 +137,12 @@ document.addEventListener('DOMContentLoaded', function () {
       fetchShopAndBankDetails()
       generateInvoiceId();
       generatedPDFBlob = generateInvoicePDF();
+      if (!generatedPDFBlob) {
+      console.warn("No PDF blob found — generate invoice first!");
+      setMessage("Please generate the invoice before saving the sale.", 'danger');
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }
+    else
       saveSale.disabled = false;
     }
   });
@@ -153,13 +159,6 @@ document.addEventListener('DOMContentLoaded', function () {
       total: grandTotal
     };
 
-    if (!generatedPDFBlob) {
-      console.warn("No PDF blob found — generate invoice first!");
-      setMessage("Please generate the invoice before saving the sale.", 'danger');
-      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-      return;
-    }
-
     const formData = new FormData();
     formData.append('orderId', saledata.orderId);
     formData.append('orderDate', saledata.orderDate);
@@ -168,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
     formData.append('total', saledata.total);
     formData.append('invoicePdf', generatedPDFBlob, `Invoice_${saledata.invoiceNo}.pdf`);
 
-    fetch('/addSale', {
+    fetch('http://127.0.0.1:5000/addSale', {
       method: 'POST',
       body: formData
     })
@@ -672,10 +671,12 @@ document.addEventListener('DOMContentLoaded', function () {
       paymentMode
     });
 
-    generatePDF(shopname, address, district, state, pincode, phone, email, gst, ac_no, bank_name, branch, ifsc, orderId,
+    generatedPDFBlob = generatePDF(shopname, address, district, state, pincode, phone, email, gst, ac_no, bank_name, branch, ifsc, orderId,
       orderDate, invoiceNo, invoiceDate, billName, billPhone, billEmail, billAddress, billDistrict, billState, billPincode,
       shipName, shipPhone, shipEmail, shipAddress, shipDistrict, shipState, shipPincode, paymentMode
     );
+
+    return generatedPDFBlob;
   }
 
   //Function to disable input and delete fields when print invoice is clicked

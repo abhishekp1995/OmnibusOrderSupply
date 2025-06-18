@@ -7,14 +7,25 @@ const clearbutton = document.getElementById('clearFields'); //clear button
 const salesTableBody = document.getElementById('salesTableBody');
 const salesTotalCell = document.getElementById('salesTotal');
 const exportExcel = document.getElementById('exportExcel');
+const ClearResults = document.getElementById('ClearResults');
 
 // Initialize form and hide all sections on DOM load
 window.addEventListener('DOMContentLoaded', async () => {
     console.log("DOM fully loaded and parsed. Initializing form...");
 
-    //Even listener for clear button
+    //Event listener for clear button
     clearbutton.addEventListener('click', () => {
         clearInput();
+    });
+
+    //Eventlistener to clear search results
+    ClearResults.addEventListener('click', () => {
+        if (validateTableRows()) {
+            salesTableBody.innerHTML = '';  // Clear previous rows
+            updateGrandTotal()
+        }
+        else
+            setMessage('No items to clear !', 'danger')
     });
 
     //Event listener for search button
@@ -50,9 +61,10 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     //Event listener for excel export button
     exportExcel.addEventListener('click', () => {
-        if (validateTableRows()) {
+        if (validateTableRows())
             exportTableToExcel();
-        }
+        else
+            setMessage('No items to export !', 'danger')
     });
 });
 
@@ -110,17 +122,17 @@ function addRows(data) {
     for (let i = 0; i < data.length; i++) {
         const newRow = document.createElement('tr');
 
-        const invoiceButton = data[i].invoice_path
-            ? `<a href="/${data[i].invoice_path}" target="_blank" class="btn btn-sm btn-primary">Download</a>`
+        const invoiceButton = data[i][5]
+            ? `<a href="/${data[i][5]}" target="_blank" class="btn btn-sm btn-primary">Download</a>`
             : `<span class="text-muted">N/A</span>`;
 
         newRow.innerHTML =
             `<td>${i + 1}</td>` +
-            `<td>${data[i].orderid}</td>` +
-            `<td>${data[i].orderdate}</td>` +
-            `<td>${data[i].invoiceid}</td>` +
-            `<td>${data[i].invoicedate}</td>` +
-            `<td>${data[i].total}</td>` +
+            `<td>${data[i][0]}</td>` +
+            `<td>${formatDate(data[i][1])}</td>` +
+            `<td>${data[i][2]}</td>` +
+            `<td>${formatDate(data[i][3])}</td>` +
+            `<td>${data[i][4]}</td>` +
             `<td>${invoiceButton}</td>`;
 
         newRow.style.textAlign = 'center';
@@ -149,7 +161,6 @@ function validateTableRows() {
     const rows = salesTableBody.getElementsByTagName('tr');
     if (rows.length == 0) {
         rowExist = false;
-        setMessage('No items to export !', 'danger')
     }
     return rowExist;
 }
@@ -187,4 +198,14 @@ function exportTableToExcel() {
     XLSX.utils.book_append_sheet(wb, ws, "Sales");
 
     XLSX.writeFile(wb, "SalesData.xlsx");
+}
+
+//Function to format date into DD-MM-YYYY
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // month is 0-based
+    const year = date.getFullYear();
+    const formattedDate = `${day}-${month}-${year}`;
+    return formattedDate;
 }

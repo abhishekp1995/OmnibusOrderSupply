@@ -17,8 +17,9 @@ def getRecords(order_id, order_from, order_to):
 
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
-        
-    return qe.executeQuery(query, params, "select")
+    
+    return qe.executeQuery(query, params, "select")  
+     
 
 def add_sale(orderId, orderDate, invoiceNo, invoiceDate, total, invoicePath):
     query = """
@@ -27,4 +28,5 @@ def add_sale(orderId, orderDate, invoiceNo, invoiceDate, total, invoicePath):
     RETURNING id
     """
     params = (orderId, orderDate, invoiceNo, invoiceDate, total, invoicePath)
+    
     return qe.executeQuery(query, params, "insert")

@@ -3,7 +3,7 @@ import os
 import sys
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-import dbhandler as db
+import dbhandler as db  # Import the database handler module
 
 app = Flask(__name__)
 CORS(app) # Enable CORS so frontend can call this API
@@ -12,15 +12,20 @@ CORS(app) # Enable CORS so frontend can call this API
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+@app.route('/getInvoiceId', methods=['GET'])
+def getId():
+    result = db.getLastRowId()
+    return jsonify(result)
+
 @app.route('/getSales', methods=['GET'])
 def search_sales():
     order_id = request.args.get('orderId')
     order_from = request.args.get('orderFrom')
     order_to = request.args.get('orderTo')
-    
+
     # Optionally validate or log query params
     print(f"Search request: order_id={order_id}, from={order_from}, to={order_to}")
-    
+
     result = db.getRecords(order_id, order_from, order_to)
     return jsonify(result)
 

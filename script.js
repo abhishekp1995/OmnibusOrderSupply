@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const priceInput = document.getElementById('price');
   const clearFields = document.getElementById('clearFields');
   const addEntry = document.getElementById('addEntry');
-  const generateInvoice = document.getElementById('generateInvoice');
+  const billingProcess = document.getElementById('billingProcess');
   const saveSale = document.getElementById('saveSale');
   const printInvoice = document.getElementById('printInvoice');
   const invoiceFields = document.getElementById('invoiceFields');
@@ -71,6 +71,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (validateData()) {
       console.log("Adding new entry to the table...");
       addRow(hsnInput, descriptionSelect, qtyInput.value, Number(priceInput.value));
+      console.log("Enabling billing process button...");
+      billingProcess.disabled = false;
       updateGrandTotal();
     }
   });
@@ -85,14 +87,19 @@ document.addEventListener('DOMContentLoaded', function () {
       // Re-number rows after deletion
       reNumberRows();
       updateGrandTotal();
-      validateTableRows();
+      if (!validateTableRows()) {
+        invoiceFields.style.display = 'none';
+        billingProcess.disabled = true;
+        setMessage('No items to invoice !', 'danger');
+      }
     }
   });
 
   // Event listener to show/hide additional invoice fields
-  generateInvoice.addEventListener('click', function () {
+  billingProcess.addEventListener('click', function () {
     console.log("Validating table rows for invoice generation...");
-    validateTableRows();
+    if (validateTableRows())
+      invoiceFields.style.display = 'block';
   });
 
   // Event listener to copy billing info to shipping if checkbox is selected
@@ -134,16 +141,16 @@ document.addEventListener('DOMContentLoaded', function () {
     if (validateBillingInfo()) {
       disableInputDeleteFields();
       disableBillingField();
-      fetchShopAndBankDetails()
+      fetchShopAndBankDetails();
       generateInvoiceId();
       generatedPDFBlob = generateInvoicePDF();
       if (!generatedPDFBlob) {
-      console.warn("No PDF blob found — generate invoice first!");
-      setMessage("Please generate the invoice before saving the sale.", 'danger');
-      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-    }
-    else
-      saveSale.disabled = false;
+        console.warn("No PDF blob found — generate invoice first!");
+        setMessage("Please generate the invoice before saving the sale.", 'danger');
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      }
+      else
+        saveSale.disabled = false;
     }
   });
 
@@ -502,14 +509,24 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   //Function to validate empty table rows
+  // function validateTableRows() {
+  //   const rows = tableBody.getElementsByTagName('tr');
+  //   if (rows.length == 0) {
+  //     invoiceFields.style.display = 'none';
+  //     setMessage('No items to invoice !', 'danger');
+  //   } else {
+  //     invoiceFields.style.display = 'block';
+  //   }
+  // }
+
+  //Function to validate empty table row
   function validateTableRows() {
+    let rowExist = true;
     const rows = tableBody.getElementsByTagName('tr');
     if (rows.length == 0) {
-      invoiceFields.style.display = 'none';
-      setMessage('No items to invoice !', 'danger');
-    } else {
-      invoiceFields.style.display = 'block';
+      rowExist = false;
     }
+    return rowExist;
   }
 
   //Function to disable shipping fields when "shipping same as billing" checkbox selected
@@ -557,8 +574,26 @@ document.addEventListener('DOMContentLoaded', function () {
   function generateInvoiceId() {
     const invoiceNo = document.getElementById('invoiceNo');
     const orderId = document.getElementById('orderId').value.trim();
+    let id = orderId;
     const currentYear = new Date().getFullYear();
-    invoiceNo.value = `OT-${currentYear}-${orderId}`;
+
+    fetch('http://127.0.0.1:5000/getInvoiceId')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Result:", data);
+        if (data != null)
+          id = data + 1;
+      })
+      .catch(error => {
+        console.error("Error fetching last row Id, invoice ID will be taken from Order ID. Error:", error);
+      });
+      
+      invoiceNo.value = `OT-${currentYear}-${id}`;
   }
 
   // --- Shop and bank details fetch/parse functions ---
@@ -682,7 +717,7 @@ document.addEventListener('DOMContentLoaded', function () {
   //Function to disable input and delete fields when print invoice is clicked
   function disableInputDeleteFields() {
     addEntry.disabled = true;
-    generateInvoice.disabled = true
+    billingProcess.disabled = true
     categorySelect.value = 0;
     paymentMode.disabled = true;
     //To disable delete button in table

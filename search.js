@@ -21,8 +21,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     //Eventlistener to clear search results
     ClearResults.addEventListener('click', () => {
         if (validateTableRows()) {
-            salesTableBody.innerHTML = '';  // Clear previous rows
-            updateGrandTotal()
+            clearTable();
         }
         else
             setMessage('No items to clear !', 'danger')
@@ -30,13 +29,19 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     //Event listener for search button
     searchbutton.addEventListener('click', () => {
+        if (validateTableRows()) {
+            clearTable();
+        }
         if (validate()) {
             const params = new URLSearchParams();
             if (orderId.value.trim()) params.append('orderId', orderId.value);
             if (orderFrom.value) params.append('orderFrom', orderFrom.value);
             if (orderTo.value) params.append('orderTo', orderTo.value);
 
-            fetch(`http://127.0.0.1:5000/getSales${params.toString()}`)
+            // Check if there are any parameters to append
+            const queryString = params.toString() ? `?${params.toString()}` : '';
+
+            fetch(`http://127.0.0.1:5000/getSales${queryString}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error("Network response was not ok");
@@ -54,9 +59,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 })
                 .catch(error => {
                     console.error("Error fetching sales records:", error);
-                    setMessage('Failed to fetch sales records.', 'alert alert-danger');
+                    setMessage('Failed to fetch sales records.', 'danger');
                 });
         }
+
     });
 
     //Event listener for excel export button
@@ -94,6 +100,12 @@ function clearInput() {
     setMessage('', '');
 }
 
+//Function to clear table rows
+function clearTable() {
+    salesTableBody.innerHTML = ''; // Clear previous rows
+    updateGrandTotal();
+}
+
 //Function to validate date range
 function validate() {
     console.log('validating input fields');
@@ -108,7 +120,7 @@ function validate() {
         }
     }
     if (!isvalid) {
-        setMessage(message, 'alert alert-danger');
+        setMessage(message, 'danger');
     }
     else {
         setMessage('', '');
@@ -137,6 +149,9 @@ function addRows(data) {
 
         newRow.style.textAlign = 'center';
         salesTableBody.appendChild(newRow);
+        console.log('Enabling excel export and clear result buttons...')
+        exportExcel.disabled=false;
+        ClearResults.disabled=false;
     }
 }
 

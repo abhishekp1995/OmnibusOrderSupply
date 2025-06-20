@@ -576,6 +576,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const orderId = document.getElementById('orderId').value.trim();
     let id = orderId;
     const currentYear = new Date().getFullYear();
+    const nextYear = (currentYear + 1).toString().slice(2,4);
+
 
     fetch('http://127.0.0.1:5000/getInvoiceId')
       .then(response => {
@@ -593,7 +595,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error("Error fetching last row Id, invoice ID will be taken from Order ID. Error:", error);
       });
       
-      invoiceNo.value = `OT-${currentYear}-${id}`;
+      invoiceNo.value = `OT-${currentYear}-${nextYear}-${id}`;
   }
 
   // --- Shop and bank details fetch/parse functions ---

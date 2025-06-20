@@ -133,7 +133,6 @@ function addRows(data) {
     salesTableBody.innerHTML = '';  // Clear previous rows
     for (let i = 0; i < data.length; i++) {
         const newRow = document.createElement('tr');
-
         const invoiceButton = data[i][5]
             ? `<a href="/${data[i][5]}" target="_blank" class="btn btn-sm btn-primary">Download</a>`
             : `<span class="text-muted">N/A</span>`;

@@ -130,7 +130,7 @@ function drawBillingShipping(doc, billInfo, shipInfo, marginLeft, rightX, y, pag
 
   // Draw divider below the block
   drawDivider(doc, y-3, marginLeft, pageWidth);
-  y += 7;
+  y += 6;
   return y;
 }
 
